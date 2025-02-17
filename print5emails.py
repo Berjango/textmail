@@ -9,10 +9,11 @@ import poplib
 import email
 import os
 import sys
-
-pop = poplib.POP3("mail.optusnet.com.au")#pop3 account (hostname)
-pop.user("freakcycle@optusnet.com.au")#user name (first part of email adress
+emailaddress=input("Type the email address -> ")
+server=input("Type the incoming mail server address -> ")
 password=input("Type the email password -> ")
+pop = poplib.POP3(server)#pop3 account (hostname)
+pop.user(emailaddress)#user name (first part of email adress
 pop.pass_(password)#Email password
 nbMsg, nbOctet = pop.stat()
 emailstr=""
