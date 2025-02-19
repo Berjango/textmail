@@ -5,7 +5,7 @@
 #Does not do html or follow links
 #Updated 17 Feb 2025 (roughly working on this date))
 import poplib
-#from email.Parser import Parser
+from email.parser import Parser
 import email
 import os
 import sys
@@ -15,13 +15,15 @@ password=input("Type the email password -> ")
 pop = poplib.POP3(server)#pop3 account (hostname)
 pop.user(emailaddress)#user name (first part of email adress
 pop.pass_(password)#Email password
-nbMsg, nbOctet = pop.stat()
+messagecount, mailsize = pop.stat()
 emailstr=""
-for n in range(nbMsg):
-	response, lines, bytes = pop.retr(n+1)
-	emailstr+=str(lines[n+1])
-	print (response,lines,bytes)
-print ("retrieved email")
+for n in range(5):
+	response, lines, octets = pop.retr(n+1)
+	#emailstr=str(lines[n+1])
+	print (lines)
+	pause=input("End of message. Press return for next message")
+#	print (emailstr+"\n")
+#	wait=input("\nPress enter for next email")
 # which retrieve email from a pop3 account and
 p=Parser()
 emailMessage=p.parsestr(emailstr)
@@ -31,10 +33,14 @@ fields = emailMessage.keys()
 #if (emailMessage.has_key(‘To’)):
 #print "has keys"
 #	emailMessage.__delitem__(‘To’)
-#fromaddress=emailMessage.__getitem__(‘From’)
+fromaddress=str(emailMessage.__getitem__("From"))
 #emailMessage.__setitem__(‘To’, ‘test@yourdomain.com’)
-subj = emailMessage.__getitem__("Subject")
+subj = str(emailMessage.__getitem__("Subject"))
+print ("from"+fromaddress+" subj="+subj)
+wait=input("Press enter to continue")
+
 print ("The message contains the following keys:\n")
 for field in fields:
 	print (field + "\n")
-print ("from"+fromaddress+" subj="+subj)
+pop.quit()
+
