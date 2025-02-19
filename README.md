@@ -6,7 +6,7 @@ USE AT OWN RISK
 
 Terminal based lightweight python program to print last few emails as text
 
-Development status - Unfinisned but partly working
+Development status - Unfinished but partly working
 
 To run type the following in a terminal
 
