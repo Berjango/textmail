@@ -1,14 +1,26 @@
 #NO GUARANTEE THIS PROGRAM DOES ANYTHING USEFUL OR SAFE
 #USE AT OWN RISK
 #Lightweight program to print the last few emails as text!!
+# This is a poorly writte program to roughly work
 #Peter Wolf 15-12-2023
 #Does not do html or follow links
 #Updated 17 Feb 2025 (roughly working on this date))
 import poplib
-from email.parser import Parser
 import email
+from email.parser import Parser
 import os
 import sys
+
+
+def	printdetails(rawtext):
+	r=rawtext[0]
+	i=r.find(b'Received:')
+	print("FROM : "+str(r[i+10:i+60]))
+	i=r.find(b'Subject:')
+	print("SUBJECT:"+str(r[i+8:i+68]))
+
+
+#p=Parser()
 emailaddress=input("Type the email address -> ")
 server=input("Type the incoming mail server address -> ")
 password=input("Type the email password -> ")
@@ -16,31 +28,29 @@ pop = poplib.POP3(server)#pop3 account (hostname)
 pop.user(emailaddress)#user name (first part of email adress
 pop.pass_(password)#Email password
 messagecount, mailsize = pop.stat()
-emailstr=""
-for n in range(5):
-	response, lines, octets = pop.retr(n+1)
-	#emailstr=str(lines[n+1])
-	print (lines)
-	pause=input("End of message. Press return for next message")
-#	print (emailstr+"\n")
-#	wait=input("\nPress enter for next email")
-# which retrieve email from a pop3 account and
-p=Parser()
-emailMessage=p.parsestr(emailstr)
+emails=[]
+for n in range(messagecount,messagecount-5,-1):
+	response, lines, octets = pop.retr(n)
+	emails.append(lines)
+pop.quit()
+
+for email in emails:
+	printdetails(email)
+#	emailstr=str(lines)
+	#emailMessage=p.parsestr(emailstr)
 #msgJustHeaders = p.parsestr(nbMsg, True)
 #emailMessage = email.message_from_string(nbMsg)
-fields = emailMessage.keys()
-#if (emailMessage.has_key(‘To’)):
-#print "has keys"
-#	emailMessage.__delitem__(‘To’)
-fromaddress=str(emailMessage.__getitem__("From"))
-#emailMessage.__setitem__(‘To’, ‘test@yourdomain.com’)
-subj = str(emailMessage.__getitem__("Subject"))
-print ("from"+fromaddress+" subj="+subj)
-wait=input("Press enter to continue")
-
-print ("The message contains the following keys:\n")
-for field in fields:
-	print (field + "\n")
-pop.quit()
+#fields = emailMessage.keys()
+	#fromaddress=str(emailMessage.__getitem__("From"))
+	#subj = str(emailMessage.__getitem__("Subject"))
+#	print ("from"+fromaddress+" subj="+subj+"\n\n")
+	#print(emailMessage)
+	choice=input("Print raw message? (Y)es or (N)o -> ")
+	if (choice=="Y" or choice=="y"):
+		print (email)
+		print("\n\n\n\n")
+		wait=input("\n\nEnd of message. Press Enter to continue")
+#print ("The message contains the following keys:\n")
+#for field in fields:
+#	print (field + "\n")
 
