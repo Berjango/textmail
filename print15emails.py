@@ -36,8 +36,10 @@ for n in range(messagecount,messagecount-emailstoprint,-1):
 	response, lines, octets = pop.retr(n)
 	emails.append(lines)
 pop.quit()
-
+emailnumber=messagecount
 for em in emails:
+	print("\nEMAIL number "+str(emailnumber)+"\n")
+	emailnumber-=1
 	printdetails(em)
 	#msg = email.message_from_bytes(em)
 #	emobj=p.parsestr(str(em))
