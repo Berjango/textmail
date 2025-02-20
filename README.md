@@ -12,4 +12,4 @@ To run type the following in a terminal
 
 python3 print15emails.py
 
-print5emails.py also may work
+print5emails.py also may work but is an old version and should not be used
