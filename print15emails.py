@@ -22,10 +22,17 @@ def	printdetails(rawtext):
 	i=r.find("Subject:")
 	print("SUBJECT:"+str(r[i+8:i+68])+"\n\n")
 
+dat=open("inboxdata")
+emailaddress=dat.readline().strip()
+server=dat.readline().strip()
+dat.close()
+print("Saved email address = "+emailaddress+" saved inbox server = "+server+"\n")
 
 #p=Parser()
-emailaddress=input("Type the email address -> ")
-server=input("Type the incoming mail server address -> ")
+if len(emailaddress)<3:
+    emailaddress=input("Type the email address -> ")
+if len(server)<3:
+    server=input("Type the incoming mail server address -> ")
 password=getpass("Type the email password -> ")
 pop = poplib.POP3(server)#pop3 account (hostname)
 pop.user(emailaddress)#user name (first part of email adress
@@ -52,7 +59,7 @@ for em in emails:
 	#print(emailMessage)
 	choice=input("Print raw message? (Y)es or (N)o (D)elete message or (E)xit -> ")
 	if (choice.upper()=="Y"):
-		print (email)
+		print (em)
 		print("\n\n\n\n")
 		wait=input("\n\nEnd of message. Press Enter to continue")
 	elif (choice.upper()=="D"):
