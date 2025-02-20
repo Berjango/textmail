@@ -12,7 +12,7 @@ import os
 from getpass import getpass
 
 emailstoprint=15
-
+todelete=[]
 def	printdetails(rawtext):
 	r=str(rawtext)
 	i=r.find("From:")
@@ -39,7 +39,6 @@ pop.quit()
 emailnumber=messagecount
 for em in emails:
 	print("\nEMAIL number "+str(emailnumber)+"\n")
-	emailnumber-=1
 	printdetails(em)
 	#msg = email.message_from_bytes(em)
 #	emobj=p.parsestr(str(em))
@@ -51,12 +50,26 @@ for em in emails:
 #	print("From:"+fromaddress+" Subject:"+subj+"\n\n")
 	#print(msg)
 	#print(emailMessage)
-	choice=input("Print raw message? (Y)es or (N)o -> ")
-	if (choice=="Y" or choice=="y"):
+	choice=input("Print raw message? (Y)es or (N)o (D)elete message or (E)xit -> ")
+	if (choice.upper()=="Y"):
 		print (email)
 		print("\n\n\n\n")
 		wait=input("\n\nEnd of message. Press Enter to continue")
+	elif (choice.upper()=="D"):
+		wait=input("\n\nWill delete email number "+str(emailnumber)+"   Press n to not delete or Enter to continue")
+		if (wait.upper()!="N"):
+			todelete.append(emailnumber)
+	elif(choice.upper()=="E"):
+		break			
+	emailnumber-=1
 #print ("The message contains the following keys:\n")
 #for field in fields:
 #	print (field + "\n")
-
+pop = poplib.POP3(server)#pop3 account (hostname)
+pop.user(emailaddress)#user name (first part of email adress
+pop.pass_(password)#Email password
+x=pop.stat()
+for id in todelete:
+	print("Deleting email "+str(id)+"\n")
+	pop.dele(id)
+pop.quit()
