@@ -16,17 +16,22 @@ todelete=[]
 def	printdetails(rawtext):
 	r=str(rawtext)
 	i=r.find("From:")
-	print("FROM : "+str(r[i+7:i+60]))
+	print("FROM : "+str(r[i+5:i+60]))
 	i=r.find("Date:")
-	print("DATE : "+str(r[i+7:i+60]))
+	print("DATE : "+str(r[i+5:i+60]))
 	i=r.find("Subject:")
 	print("SUBJECT:"+str(r[i+8:i+68])+"\n\n")
 
-dat=open("inboxdata")
-emailaddress=dat.readline().strip()
-server=dat.readline().strip()
-dat.close()
-print("Saved email address = "+emailaddress+" saved inbox server = "+server+"\n")
+try:
+    dat=open("inboxdata")
+    emailaddress=dat.readline().strip()
+    server=dat.readline().strip()
+    dat.close()
+    print("Saved email address = "+emailaddress+" saved inbox server = "+server+"\n")
+except:
+    emailaddress=""
+    server=""
+    print("No saved data. You can create a text file named inboxdata to save time with the first line containing the email address and second line the inbox server\n")
 
 #p=Parser()
 if len(emailaddress)<3:
