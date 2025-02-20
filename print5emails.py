@@ -13,11 +13,13 @@ import sys
 
 
 def	printdetails(rawtext):
-	r=rawtext[0]
-	i=r.find(b'Received:')
-	print("FROM : "+str(r[i+10:i+60]))
-	i=r.find(b'Subject:')
-	print("SUBJECT:"+str(r[i+8:i+68]))
+	r=str(rawtext)
+	i=r.find("From:")
+	print("FROM : "+str(r[i+7:i+60]))
+	i=r.find("Date:")
+	print("DATE : "+str(r[i+7:i+60]))
+	i=r.find("Subject:")
+	print("SUBJECT:"+str(r[i+8:i+68])+"\n\n")
 
 
 #p=Parser()
@@ -29,7 +31,7 @@ pop.user(emailaddress)#user name (first part of email adress
 pop.pass_(password)#Email password
 messagecount, mailsize = pop.stat()
 emails=[]
-for n in range(messagecount,messagecount-5,-1):
+for n in range(messagecount,messagecount-15,-1):
 	response, lines, octets = pop.retr(n)
 	emails.append(lines)
 pop.quit()
