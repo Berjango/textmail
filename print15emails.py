@@ -8,19 +8,20 @@
 import poplib
 import email
 from email.parser import Parser
-import os
+import re
 from getpass import getpass
 
 emailstoprint=15
 todelete=[]
 def	printdetails(rawtext):
+	fields=["From:.{0,80}<.{0,50}@.{0,50}>\,","Date:.{0,30}\d{2}:\d{2}:\d{2}.{0,30}\,","Subject:.{0,3}=.{5,150}\,"]
 	r=str(rawtext)
-	i=r.find("From:")
-	print("FROM : "+str(r[i+5:i+60]))
-	i=r.find("Date:")
-	print("DATE : "+str(r[i+5:i+60]))
-	i=r.find("Subject:")
-	print("SUBJECT:"+str(r[i+8:i+68])+"\n\n")
+	r2=re.sub("\"","",r)
+	r2=re.sub("\'","",r2)
+	for field in fields:
+		mobj=re.search(field,r2)
+		if mobj:
+			print(mobj.group())
 
 try:
     dat=open("inboxdata")
