@@ -6,28 +6,30 @@
 #Does not do html or follow links
 #Updated 17 Feb 2025 (roughly working on this date))
 import poplib
+poplib._MAXLINE=20480
 import email
 from email.parser import Parser
 import re
 import utils
 from getpass import getpass
 
-emailstoprint=15
-todelete=[]
 
 def	typeinboxdetails():
 	emailaddress=input("Type the email address -> ")
 	server=input("Type the incoming mail server address -> ")
 	password=getpass("Type the email password -> ")
 	return(emailaddress,server,password)
+
+emailstoprint=15
+todelete=[]
     
 try:
-	dat=open("banned")
-	banned=(dat.read().split("\n"))
+	dat=open("banned","r")
+	banned=dat.read().split()
 	dat.close()
-	print("Banned parts of email addresses - > "+banned)
+	print("Banned parts of email addresses - > "+str(banned))
 except:
-	banned=[]
+	ban=[]
 	print("No banned addresses detected. You can create a file called banned and list banned addresses in the consecutive lines\n")
 try:
 	dat=open("inboxdata")
@@ -53,9 +55,11 @@ while not loggedin:
 		messagecount, mailsize = pop.stat()
 		loggedin=1
 	except:
-		choice=input("Could not login to inbox,probably wrong details.Type m to enter details manually or press enter to exit.\n")
+		choice=input("Could not login to inbox,probably wrong details.Type m to enter details manually,p to enter password again or press enter to exit.\n")
 		if (choice.upper()=="M"):
 			emailaddress,server,password=typeinboxdetails()
+		elif(choice.upper()=="P"):
+			password=getpass("Type the email password -> ")
 		else:
 			exit(1)
 
