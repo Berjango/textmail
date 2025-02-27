@@ -1,6 +1,6 @@
 #NO GUARANTEE THIS PROGRAM DOES ANYTHING USEFUL OR SAFE
 #USE AT OWN RISK
-#Lightweight program to print the last few emails as text!!
+#Lightweight program to print and or process the last few emails!!
 # This is a poorly written program to roughly work
 #Peter Wolf 15-12-2023
 #Does not do html or follow links
@@ -13,6 +13,7 @@ import re
 import utils
 from getpass import getpass
 
+debug=0
 
 def	typeinboxdetails():
 	emailaddress=input("Type the email address -> ")
@@ -22,12 +23,14 @@ def	typeinboxdetails():
 
 emailstoprint=15
 todelete=[]
+bannedfile="banned"
     
 try:
-	dat=open("banned","r")
+	dat=open(bannedfile,"r")
 	banned=dat.read().split()
 	dat.close()
-	print("Banned parts of email addresses - > "+str(banned))
+	if debug:
+		print("Banned parts of email addresses - > "+str(banned))
 except:
 	ban=[]
 	print("No banned addresses detected. You can create a file called banned and list banned addresses in the consecutive lines\n")
@@ -79,11 +82,27 @@ for em in emails:
 		todelete.append(emailnumber)
 		emailnumber-=1		
 		continue
-	choice=input("Print raw message? (Y)es or (N)o ,(D)elete email,(S)ave email or E(x)it -> ")
+	choice=input("Print raw message? (Y)es,(D)elete email,(B)an email address and delete,(S)ave email or E(x)it -> ")
 	if (choice.upper()=="Y"):
 		print (utils.html2text(str(em)))
 		print("\n\n\n\n")
-#		wait=input("\n\nEnd of message. Press Enter to continue")
+		wait=input("\n\nEnd of message. Press (d) to delete or Enter to continue")
+		if(wait.upper()=="D"):
+			todelete.append(emailnumber)
+	elif(choice.upper()=="B"):
+		data=re.split("@",details[0])[1]
+		if(debug):
+			print("From field= "+details[0]+"    data= "+data+"\n")
+		data=re.sub(r'>.*',"",data)
+		try:
+			if(debug):
+				print(data)
+			dat=open(bannedfile,"a")
+			dat.write(data+"\n")
+			dat.close()
+			todelete.append(emailnumber)
+		except:
+			print("Could not add banned email address,try adding it manually in a text editor\n")
 	elif (choice.upper()=="D"):
 		wait=input("\n\nWill delete email number "+str(emailnumber)+"   Press n to not delete or Enter to continue -> ")
 		if (wait.upper()!="N"):
