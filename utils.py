@@ -18,7 +18,7 @@ def inlist(text,thelist):
 			ans=m.span()
 		except:
 			ans=[0,0]
-		if ans[0]!=0 or ans[1]!=0:
+		if ans!=[0,0]:
 			return(1)
 	return(0)
 
@@ -33,3 +33,4 @@ def	emaildetails(rawemail):
 		if mobj:
 			output.append(mobj.group())
 	return(output)
+

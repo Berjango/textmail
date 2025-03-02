@@ -5,6 +5,17 @@
 #Peter Wolf 15-12-2023
 #Does not do html or follow links
 #Updated 17 Feb 2025 (roughly working on this date))
+
+
+
+##################################    CONFIGURATION SECTION ,change values as required ########################
+emailstoprint=15
+maximumemails=2500 #Will autodelete oldest emails if the number of emails exceeds this value
+debug=0 # if set to  1 the program will print extra information useful for debugging
+
+################################################################################################################
+
+
 import poplib
 poplib._MAXLINE=20480
 import email
@@ -13,7 +24,6 @@ import re
 import utils
 from getpass import getpass
 
-debug=0
 
 def	typeinboxdetails():
 	emailaddress=input("Type the email address -> ")
@@ -21,7 +31,7 @@ def	typeinboxdetails():
 	password=getpass("Type the email password -> ")
 	return(emailaddress,server,password)
 
-emailstoprint=15
+
 todelete=[]
 bannedfile="banned"
     
@@ -101,8 +111,9 @@ for em in emails:
 			dat.write(data+"\n")
 			dat.close()
 			todelete.append(emailnumber)
+			print("Banned email "+str(emailnumber)+"\n")
 		except:
-			print("Could not add banned email address,try adding it manually in a text editor\n")
+			red_text("Could not add banned email address,try adding it manually in a text editor\n")
 	elif (choice.upper()=="D"):
 		wait=input("\n\nWill delete email number "+str(emailnumber)+"   Press n to not delete or Enter to continue -> ")
 		if (wait.upper()!="N"):
@@ -120,12 +131,16 @@ for em in emails:
 			print("Error! Could not save email\n")
 
 	emailnumber-=1
+
+todelete+=range(1,messagecount-maximumemails-len(todelete))
+if(debug):
+    print("todelete = "+str(todelete))
+
 if not todelete:
 	exit(0)
 pop = poplib.POP3(server)#pop3 account (hostname)
 pop.user(emailaddress)#user name (first part of email adress
 pop.pass_(password)#Email password
-x=pop.stat()
 for id in todelete:
 	print("Deleting email "+str(id)+"\n")
 	pop.dele(id)
