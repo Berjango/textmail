@@ -1,15 +1,15 @@
 # textmail
 
-NO GUARANTEES
+NO GUARANTEES,
 USE AT OWN RISK
 
 
-Terminal based lightweight python program to print and process last few email.May be useful for quickly checking last few emails.
+Terminal based lightweight python program to print and process last few emails.May be useful for quickly checking last few emails.
 
 Does not do html or follow links so not good at viewing strongly html based emails.
 
 
-Processing options include : deleting emails,skipping emails,banning emails,autodeleting oldest emails.
+Processing options include : deleting emails,skipping emails,banning email addresses,autodeleting oldest emails.
 
 Development status - Working well,nearing completion.
 
