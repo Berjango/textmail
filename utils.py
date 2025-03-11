@@ -3,12 +3,19 @@ import re
 
 def	html2text(html):
 	'''A very simplistic and rough html to text converter'''
-	todelete=[r'<.[^>]*>',r'\'\, b\'\s*',r'=[a-zA-z0-9]{2}\s*',r'\{.[^\}]*\}',r'https?.[^\s]*',r'[a-zA-Z0-9]{20,200}']
+	todelete=[r'<.[^>]*>',r'\'\, b\'\s*',r'=[a-zA-z0-9]{2}\s*',r'\{.[^\}]*\}',r'https?.[^\s]*',r'[a-zA-Z0-9]{20,200}',r'\&nbsp\;',r'\&\#.[\s]*',r'\.wrapper',r'\.colspan.[^\s]*',r'\.container.[^\s]*',r'\\x.[^\s]*',r'\\t']
 	text=html
 	for el in todelete:
 		text=re.sub(el," ",text)
 	return(text)
+from urllib import request
 
+def internet_on():
+	try:
+		request.urlopen('https://google.com', timeout=1)
+		return True
+	except request.URLError as err: 
+		return False
 
 def inlist(text,thelist):
 	'''Returns true if only if the text is embeded in a list element'''

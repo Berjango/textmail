@@ -25,6 +25,21 @@ import utils
 from getpass import getpass
 
 
+def delete_emails(todelete,server,emailaddress,password):
+	'''deletes emails according to a passed list of email numbers'''
+	try:
+		pop = poplib.POP3(server)#pop3 account (hostname)
+		pop.user(emailaddress)#user name (first part of email adress
+		pop.pass_(password)#Email password
+		print("\n")
+		for id in todelete:
+			print("Deleting email "+str(id)+"\n")
+			pop.dele(id)
+		pop.quit()
+	except:
+		print("Unable to delete emails,probably a temporary login problem,next time should work.\n")
+
+
 def	typeinboxdetails():
 	emailaddress=input("Type the email address -> ")
 	server=input("Type the incoming mail server address -> ")
@@ -34,7 +49,9 @@ def	typeinboxdetails():
 
 todelete=[]
 bannedfile="banned"
-    
+
+while not utils.internet_on():
+	key=input("No inernet connection. Connect computer to the internet and press Enter ")
 try:
 	dat=open(bannedfile,"r")
 	banned=dat.read().split()
@@ -96,7 +113,7 @@ for em in emails:
 	if (choice.upper()=="Y"):
 		print (utils.html2text(str(em)))
 		print("\n\n\n\n")
-		wait=input("\n\nEnd of message. Press (d) to delete or Enter to continue")
+		wait=input("\n\nEnd of message. Press (d) to delete or Enter to continue -> ")
 		if(wait.upper()=="D"):
 			todelete.append(emailnumber)
 	elif(choice.upper()=="B"):
@@ -132,16 +149,10 @@ for em in emails:
 
 	emailnumber-=1
 
-todelete+=range(1,messagecount-maximumemails-len(todelete))
+todelete+=range(1,messagecount-maximumemails-len(todelete)+1)
 if(debug):
     print("todelete = "+str(todelete))
 
-if not todelete:
-	exit(0)
-pop = poplib.POP3(server)#pop3 account (hostname)
-pop.user(emailaddress)#user name (first part of email adress
-pop.pass_(password)#Email password
-for id in todelete:
-	print("Deleting email "+str(id)+"\n")
-	pop.dele(id)
-pop.quit()
+if todelete:
+	delete_emails(todelete,server,emailaddress,password)
+
