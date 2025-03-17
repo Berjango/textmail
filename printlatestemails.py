@@ -12,7 +12,7 @@
 emailstoprint=15
 maximumemails=2500 #Will autodelete oldest emails if the number of emails exceeds this value
 debug=0 # if set to  1 the program will print extra information useful for debugging
-
+maximumemailtext=5000#maximum allowed length of email text in chars after processing,this includes the email header so allow a larger value
 ################################################################################################################
 
 
@@ -51,7 +51,11 @@ todelete=[]
 bannedfile="banned"
 
 while not utils.internet_on():
-	key=input("No inernet connection. Connect computer to the internet and press Enter ")
+	key=input("No inernet connection. Connect computer to the internet and press Enter, or e(x)it, or (c)ontinue anyway -> ")
+	if(key.upper()=="X"):
+		exit()
+	elif(key.upper()=="C"):
+		break
 try:
 	dat=open(bannedfile,"r")
 	banned=dat.read().split()
@@ -111,8 +115,16 @@ for em in emails:
 		continue
 	choice=input("Print raw message? (Y)es,(D)elete email,(B)an email address and delete,(S)ave email or E(x)it -> ")
 	if (choice.upper()=="Y"):
-		print (utils.html2text(str(em)))
-		print("\n\n\n\n")
+		emailtext=utils.html2text(str(em))
+		if(len(emailtext)<maximumemailtext):
+			print (emailtext)
+			print("\n\n\n\n")
+		else:
+			ans=input("WARNING!!! Email text is too long,probably a scam email,recommended to not print and delete later.Press y to print anyway or enter to not print and continue. -> ")
+			if(ans.upper()=="Y"):
+				print (emailtext)
+				print("\n\n\n\n")
+	
 		wait=input("\n\nEnd of message. Press (d) to delete or Enter to continue -> ")
 		if(wait.upper()=="D"):
 			todelete.append(emailnumber)

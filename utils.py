@@ -11,11 +11,21 @@ def	html2text(html):
 from urllib import request
 
 def internet_on():
+	if(openurl("https://google.com")):
+		return	True
+	elif(openurl("https://yahoo.com")):
+		return	True
+	else:
+		return	False
+
+
+def	openurl(theurl):
 	try:
-		request.urlopen('https://google.com', timeout=1)
+		request.urlopen(theurl, timeout=1)
 		return True
 	except request.URLError as err: 
 		return False
+
 
 def inlist(text,thelist):
 	'''Returns true if only if the text is embeded in a list element'''
