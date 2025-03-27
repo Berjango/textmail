@@ -12,7 +12,7 @@
 emailstoprint=15
 maximumemails=2500 #Will autodelete oldest emails if the number of emails exceeds this value
 debug=0 # if set to  1 the program will print extra information useful for debugging
-maximumemailtext=5000#maximum allowed length of email text in chars after processing,this includes the email header so allow a larger value
+maximumemailtext=15000#maximum allowed length of email text in chars after processing
 ################################################################################################################
 
 
@@ -22,6 +22,7 @@ import email
 from email.parser import Parser
 import re
 import utils
+import datetime
 from getpass import getpass
 
 
@@ -106,6 +107,7 @@ emailnumber=messagecount
 for em in emails:
 	print("\nEMAIL number "+str(emailnumber)+"\n")
 	details=utils.emaildetails(em)
+	text=details.pop(-1)
 	for info in details:
 			print(info)
 	if(utils.inlist(details[0],banned)):
@@ -115,7 +117,7 @@ for em in emails:
 		continue
 	choice=input("Print raw message? (Y)es,(D)elete email,(B)an email address and delete,(S)ave email or E(x)it -> ")
 	if (choice.upper()=="Y"):
-		emailtext=utils.html2text(str(em))
+		emailtext=utils.html2text(str(text))
 		if(len(emailtext)<maximumemailtext):
 			print (emailtext)
 			print("\n\n\n\n")
@@ -150,7 +152,7 @@ for em in emails:
 	elif(choice.upper()=="X"):
 		break			
 	elif(choice.upper()=="S"):
-		filename="email"+str(emailnumber)+".eml"
+		filename="email"+str(emailnumber)+"_"+str(datetime.datetime.now())+".eml"
 		try:
 			f=open(filename,"w")
 			f.write(str(em))
