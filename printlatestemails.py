@@ -26,39 +26,17 @@ import datetime
 from getpass import getpass
 
 
-def delete_emails(todelete,server,emailaddress,password):
-	'''deletes emails according to a passed list of email numbers'''
-	try:
-		pop = poplib.POP3(server)#pop3 account (hostname)
-		pop.user(emailaddress)#user name (first part of email adress
-		pop.pass_(password)#Email password
-		print("\n")
-		for id in todelete:
-			print("Deleting email "+str(id)+"\n")
-			pop.dele(id)
-		pop.quit()
-	except:
-		print("Unable to delete emails,probably a temporary login problem,next time should work.\n")
-
-
-def	typeinboxdetails():
-	emailaddress=input("Type the email address -> ")
-	server=input("Type the incoming mail server address -> ")
-	password=getpass("Type the email password -> ")
-	return(emailaddress,server,password)
-
 
 todelete=[]
-bannedfile="banned"
 
 while not utils.internet_on():
-	key=input("No inernet connection. Connect computer to the internet and press Enter, or e(x)it, or (c)ontinue anyway -> ")
+	key=input("No internet connection. Connect computer to the internet and press Enter, or e(x)it, or (c)ontinue anyway -> ")
 	if(key.upper()=="X"):
 		exit()
 	elif(key.upper()=="C"):
 		break
 try:
-	dat=open(bannedfile,"r")
+	dat=open(utils.bannedfile,"r")
 	banned=dat.read().split()
 	dat.close()
 	if debug:
@@ -77,7 +55,7 @@ except:
 	server=""
 	print("No saved data. You can create a text file named inboxdata to save time with the first line containing the email address and second line the inbox server\n")
 if len(emailaddress)<3:
-	emailaddress,server,password=typeinboxdetails()
+	emailaddress,server,password=utils.typeinboxdetails()
 else:
 	password=getpass("Type the email password -> ")
 #p=Parser()
@@ -92,7 +70,7 @@ while not loggedin:
 	except:
 		choice=input("Could not login to inbox,probably wrong details.Type m to enter details manually,p to enter password again or press enter to exit.\n")
 		if (choice.upper()=="M"):
-			emailaddress,server,password=typeinboxdetails()
+			emailaddress,server,password=utils.typeinboxdetails()
 		elif(choice.upper()=="P"):
 			password=getpass("Type the email password -> ")
 		else:
@@ -168,5 +146,5 @@ if(debug):
     print("todelete = "+str(todelete))
 
 if todelete:
-	delete_emails(todelete,server,emailaddress,password)
+	utils.delete_emails(todelete,server,emailaddress,password)
 

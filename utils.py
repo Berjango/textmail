@@ -1,9 +1,12 @@
 
 import re
+from getpass import getpass
+
+bannedfile="banned"
 
 def	html2text(html):
 	'''A very simplistic and rough html to text converter'''
-	todelete=[r'<.[^>]*>',r'\'\, b\'\s*',r'=[a-zA-z0-9]{2}\s*',r'\{.[^\}]*\}',r'https?.[^\s]*',r'[a-zA-Z0-9]{20,200}',r'\&nbsp\;',r'\&\#.[\s]*',r'\.wrapper',r'\.colspan.[^\s]*',r'\.container.[^\s]*',r'\\x.[^\s]*',r'\\t',r'[\s=\-\,b]{5,1000}']
+	todelete=[r'<.[^>]*>',r'\'\, b\'\s*',r'=[a-zA-z0-9]{2}\s*',r'\{.[^\}]*\}',r'https?.[^\s]*',r'[a-zA-Z0-9]{20,200}',r'\&nbsp\;',r'\&\#.[\s]*',r'\.wrapper',r'\.colspan.[^\s]*',r'\.container.[^\s]*',r'\\x.[^\s]*',r'\\t',r'[\s=\-\,_bFE\;]{5,1000}']
 	text=html
 	for el in todelete:
 		text=re.sub(el," ",text)
@@ -17,6 +20,25 @@ def internet_on():
 		return	True
 	else:
 		return	False
+def	typeinboxdetails():
+	emailaddress=input("Type the email address -> ")
+	server=input("Type the incoming mail server address -> ")
+	password=getpass("Type the email password -> ")
+	return(emailaddress,server,password)
+	
+def delete_emails(todelete,server,emailaddress,password):
+	'''deletes emails according to a passed list of email numbers'''
+	try:
+		pop = poplib.POP3(server)#pop3 account (hostname)
+		pop.user(emailaddress)#user name (first part of email adress
+		pop.pass_(password)#Email password
+		print("\n")
+		for id in todelete:
+			print("Deleting email "+str(id)+"\n")
+			pop.dele(id)
+		pop.quit()
+	except:
+		print("Unable to delete emails,probably a temporary login problem,next time should work.\n")
 
 
 def	openurl(theurl):
