@@ -1,6 +1,8 @@
 
 import re
 from getpass import getpass
+import poplib
+poplib._MAXLINE=20480
 
 bannedfile="banned"
 
@@ -32,7 +34,7 @@ def delete_emails(todelete,server,emailaddress,password):
 		pop = poplib.POP3(server)#pop3 account (hostname)
 		pop.user(emailaddress)#user name (first part of email adress
 		pop.pass_(password)#Email password
-		print("\n")
+		print("Preparing to delete\n")
 		for id in todelete:
 			print("Deleting email "+str(id)+"\n")
 			pop.dele(id)
