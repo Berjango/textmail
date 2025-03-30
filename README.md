@@ -20,6 +20,24 @@ python3 printlatestemails.py
 print5emails.py and print15emails also may work but  are old versions and should not be used
 
 
-A new program has been added delete500emails.py for the purpose of shrinking an inbox to free up space. This is a dangerous program be very careful.
+Two other programs are included for the purpose of decreasing the size of the inbox.Both are dangerous programs and need to be used with extreme caution.It is best to back up your inbox before using -
+
+
+delete500emails.py -- deletes the oldest 500 emails.
+
+deletealbannedmeails.py -- deletes all banned emails in the inbox.The banned file needs to exist for this to work.This is a text file named "banned" with parts of a banned email address on each consecutive lines.
+
+so the following file would ban emails from facebook.com and gmail.com
+----------------------------------------
+facebook
+gmail
+------------------------------------------
+The following would also work
+----------------------------------------
+facebook.com
+gmail.com
+------------------------------------------
+
+
 
 LICENSE - FREE
