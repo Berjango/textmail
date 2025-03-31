@@ -42,7 +42,7 @@ try:
 	if debug:
 		print("Banned parts of email addresses - > "+str(banned))
 except:
-	ban=[]
+	banned=[]
 	print("No banned addresses detected. You can create a file called banned and list banned addresses in the consecutive lines\n")
 try:
 	dat=open("inboxdata")
