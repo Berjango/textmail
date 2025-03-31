@@ -116,7 +116,7 @@ for em in emails:
 		try:
 			if(debug):
 				print(data)
-			dat=open(bannedfile,"a")
+			dat=open(utils.bannedfile,"a")
 			dat.write(data+"\n")
 			dat.close()
 			todelete.append(emailnumber)
