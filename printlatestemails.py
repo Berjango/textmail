@@ -13,6 +13,7 @@ emailstoprint=15
 maximumemails=2500 #Will autodelete oldest emails if the number of emails exceeds this value
 debug=0 # if set to  1 the program will print extra information useful for debugging
 maximumemailtext=15000#maximum allowed length of email text in chars after processing
+deleteforeignemails=1 # if set to 1 deletes emails with non English language in the from field
 ################################################################################################################
 
 
@@ -86,11 +87,28 @@ for em in emails:
 	print("\nEMAIL number "+str(emailnumber)+"\n")
 	details=utils.emaildetails(em)
 	text=details.pop(-1)
-	for info in details:
+	firstfield=details[0]
+	isfromfield=re.search("From:",firstfield)
+	foreign=re.search("=",firstfield)
+	if not isfromfield:
+		print("From field too long,likely spam or malformed email,will delete.\n")
+		todelete.append(emailnumber)
+		utils.savemail(em,emailnumber)
+		emailnumber-=1		
+		continue
+	elif isfromfield and foreign and deleteforeignemails:
+		print("Foreign language detected in from field,will delete.\n")
+		todelete.append(emailnumber)
+		utils.savemail(em,emailnumber)
+		emailnumber-=1		
+		continue
+	else:
+		for info in details:
 			print(info)
-	if(utils.inlist(details[0],banned)):
+	if(utils.inlist(firstfield,banned)):
 		print("This email address is banned and will be deleted\n")
 		todelete.append(emailnumber)
+		utils.savemail(em,emailnumber)
 		emailnumber-=1		
 		continue
 	choice=input("Print raw message? (Y)es,(D)elete email,(B)an email address and delete,(S)ave email or E(x)it -> ")
@@ -108,6 +126,7 @@ for em in emails:
 		wait=input("\n\nEnd of message. Press (d) to delete or Enter to continue -> ")
 		if(wait.upper()=="D"):
 			todelete.append(emailnumber)
+			utils.savemail(em,emailnumber)
 	elif(choice.upper()=="B"):
 		data=re.split("@",details[0])[1]
 		if(debug):
@@ -120,24 +139,20 @@ for em in emails:
 			dat.write(data+"\n")
 			dat.close()
 			todelete.append(emailnumber)
+			utils.savemail(em,emailnumber)
 			print("Banned email "+str(emailnumber)+"\n")
 		except:
-			red_text("Could not add banned email address,try adding it manually in a text editor\n")
+			print("Could not add banned email address,try adding it manually in a text editor\n")
 	elif (choice.upper()=="D"):
 		wait=input("\n\nWill delete email number "+str(emailnumber)+"   Press n to not delete or Enter to continue -> ")
 		if (wait.upper()!="N"):
 			todelete.append(emailnumber)
+			utils.savemail(em,emailnumber)
+
 	elif(choice.upper()=="X"):
-		break			
+		break
 	elif(choice.upper()=="S"):
-		filename="email"+str(emailnumber)+"_"+str(datetime.datetime.now())+".eml"
-		try:
-			f=open(filename,"w")
-			f.write(str(em))
-			f.close()
-			print("Saved email as "+filename+"\n")
-		except:
-			print("Error! Could not save email\n")
+		utils.savemail(em,emailnumber)
 
 	emailnumber-=1
 

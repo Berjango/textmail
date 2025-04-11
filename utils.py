@@ -3,8 +3,21 @@ import re
 from getpass import getpass
 import poplib
 poplib._MAXLINE=20480
+import datetime
 
 bannedfile="banned"
+
+
+def	savemail(emaildata,emailnumber):
+	''' Save email to the temp folder with a unique name'''
+	filename="/tmp/email"+str(emailnumber)+"_"+str(datetime.datetime.now())+".eml"
+	try:
+		f=open(filename,"w")
+		f.write(str(emaildata))
+		f.close()
+		print("Temporarily saved email as "+filename+"\n")
+	except:
+		print("Error! Could not save email\n")
 
 def	html2text(html):
 	'''A very simplistic and rough html to text converter'''
@@ -65,7 +78,7 @@ def inlist(text,thelist):
 
 def	emaildetails(rawemail):
 	'''Returns a list of email details '''
-	fields=["From:.{0,80}<.{0,50}@.{0,50}>\,","Date:.{0,30}\d{2}:\d{2}:\d{2}.{0,30}\,","Subject:.{0,3}=.{5,150}\,","Content\-Type:.*"]
+	fields=["From:.{0,140}<.{0,50}@.{0,50}>\,","Date:.{0,30}\d{2}:\d{2}:\d{2}.{0,30}\,","Subject:.{0,3}=.{5,150}\,","Content\-Type:.*"]
 	r2=re.sub("\"","",str(rawemail))
 	r2=re.sub("\'","",r2)
 	output=[]
