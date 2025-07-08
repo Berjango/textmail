@@ -114,7 +114,7 @@ for em in emails:
 		utils.savemail(em,emailnumber)
 		emailnumber-=1		
 		continue
-	choice=input("Print raw message? (Y)es,(D)elete email,(B)an email address and delete,(S)ave email or E(x)it -> ")
+	choice=input("Print raw message? (Y)es,(D)elete email,(B)an email address and delete,(S)ave email , E(x)it or Press Enter to see next email. -> ")
 	if (choice.upper()=="Y"):
 		emailtext=utils.html2text(str(text))
 		if(len(emailtext)<maximumemailtext):
