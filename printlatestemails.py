@@ -26,7 +26,9 @@ import utils
 import datetime
 from getpass import getpass
 
-
+def printdetails(details):
+	for info in details:
+		print(info)
 
 todelete=[]
 
@@ -97,14 +99,15 @@ for em in emails:
 		emailnumber-=1		
 		continue
 	elif isfromfield and foreign and deleteforeignemails:
-		print("Foreign language detected in from field,will delete.\n")
-		todelete.append(emailnumber)
-		utils.savemail(em,emailnumber)
-		emailnumber-=1		
-		continue
+		printdetails(details)
+		x1=input("Foreign language detected in from field,will delete.press n for don't delete.'\n")
+		if(x1.upper()!="N"):
+			todelete.append(emailnumber)
+			utils.savemail(em,emailnumber)
+			emailnumber-=1
+			continue
 	else:
-		for info in details:
-			print(info)
+		printdetails(details)
 	if(utils.inlist(firstfield,banned)):
 		print("This email address is banned and will be deleted\n")
 		todelete.append(emailnumber)
