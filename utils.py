@@ -6,8 +6,18 @@ poplib._MAXLINE=20480
 import datetime
 
 bannedfile="banned"
+optus_server="mail.optusnet.com.au"
 
-
+def textfiletolist(filename):
+	'''converts a file with many lines of text values to a list of such values.Returns the list,empty or otherwise'''
+	ret=[]
+	try:
+		dat=open(filename,"r")
+		ret=dat.read().split()
+		dat.close()
+	except:
+		pass
+	return(ret)
 def	savemail(emaildata,emailnumber):
 	''' Save email to the temp folder with a unique name'''
 	filename="/tmp/email"+str(emailnumber)+"_"+str(datetime.datetime.now())+".eml"
@@ -37,7 +47,10 @@ def internet_on():
 		return	False
 def	typeinboxdetails():
 	emailaddress=input("Type the email address -> ")
-	server=input("Type the incoming mail server address -> ")
+	if "optusnet.com.au" in emailaddress:
+		server=optus_server
+	else:
+		server=input("Type the incoming mail server address -> ")
 	password=getpass("Type the email password -> ")
 	return(emailaddress,server,password)
 	
@@ -78,7 +91,7 @@ def inlist(text,thelist):
 
 def	emaildetails(rawemail):
 	'''Returns a list of email details '''
-	fields=["From:.[^<]{0,140}<.[^>]{0,100}>\,","Date:.{0,30}\d{2}:\d{2}:\d{2}.{0,30}\,","Subject:.{0,3}=.[^\,]{5,150}\,","Content\-Type:.*"]
+	fields=["From:.[^<]{0,140}<.[^>]{0,100}>\,","Date:.{0,30}\d{2}:\d{2}:\d{2}.{0,30}\,","Subject: .[^\,]{5,150}\,","Content\-Type:.*"]
 	r2=re.sub("\"","",str(rawemail))
 	r2=re.sub("\'","",r2)
 	output=[]

@@ -38,15 +38,9 @@ while not utils.internet_on():
 		exit()
 	elif(key.upper()=="C"):
 		break
-try:
-	dat=open(utils.bannedfile,"r")
-	banned=dat.read().split()
-	dat.close()
-	if debug:
-		print("Banned parts of email addresses - > "+str(banned))
-except:
-	banned=[]
-	print("No banned addresses detected. You can create a file called banned and list banned addresses in the consecutive lines\n")
+banned=utils.textfiletolist(utils.bannedfile)
+if(not len(banned)):
+	print("No banned addresses detected. You can create a file called banned and list banned addresses in the consecutive lines.\n")
 try:
 	dat=open("inboxdata")
 	emailaddress=dat.readline().strip()
