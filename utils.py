@@ -8,6 +8,28 @@ import datetime
 bannedfile="banned"
 optus_server="mail.optusnet.com.au"
 
+
+
+
+def convert2eml(emaildata):
+	'''Very rough format converter from poplib output to .eml format'''
+	fields=["Received:","From:","Subject:","Content-Type:","Message-ID:","Delivered-To:"]
+	fields2=["<html>","<!DOCTYPE"]
+	data=""
+	insertchar="\n"
+	insert2char="\n\n"
+	for el in emaildata:
+		data+=el.decode("utf-8")
+	for field in fields:
+		index=data.find(field)
+		if index>-1:
+			data = data[:index]+insertchar+data[index:]
+	for field in fields2:
+		index=data.find(field)
+		if index>-1:
+			data = data[:index]+insert2char+data[index:]
+	return(data)    
+
 def textfiletolist(filename):
 	'''converts a file with many lines of text values to a list of such values.Returns the list,empty or otherwise'''
 	ret=[]
@@ -21,9 +43,10 @@ def textfiletolist(filename):
 def	savemail(emaildata,emailnumber):
 	''' Save email to the temp folder with a unique name'''
 	filename="/tmp/email"+str(emailnumber)+"_"+str(datetime.datetime.now())+".eml"
+	data=convert2eml(emaildata)
 	try:
 		f=open(filename,"w")
-		f.write(str(emaildata))
+		f.write(str(data))
 		f.close()
 		print("Temporarily saved email as "+filename+"\n")
 	except:
@@ -68,7 +91,6 @@ def delete_emails(todelete,server,emailaddress,password):
 	except:
 		print("Unable to delete emails,probably a temporary login problem,next time should work.\n")
 
-
 def	openurl(theurl):
 	try:
 		request.urlopen(theurl, timeout=1)
@@ -91,7 +113,7 @@ def inlist(text,thelist):
 
 def	emaildetails(rawemail):
 	'''Returns a list of email details '''
-	fields=["From:.[^<]{0,140}<.[^>]{0,100}>\,","Date:.{0,30}\d{2}:\d{2}:\d{2}.{0,30}\,","Subject: .[^\,]{5,150}\,","Content\-Type:.*"]
+	fields=["From:.[^<]{0,140}<.[^>]{0,100}>\,","Date:.{0,30}\d{2}:\d{2}:\d{2}.{0,30}\,","Subject: .[^\,]{5,150}(?=\,)","Content\-Type:.*"]
 	r2=re.sub("\"","",str(rawemail))
 	r2=re.sub("\'","",r2)
 	output=[]

@@ -26,11 +26,19 @@ import utils
 import datetime
 from getpass import getpass
 
+
+todelete=[]
+
+
 def printdetails(details):
 	for info in details:
 		print(info)
 
-todelete=[]
+def savedelemail(data,number):
+	'''prepares to delete an email and saves it'''
+	todelete.append(number)
+	utils.savemail(data,number)
+
 
 while not utils.internet_on():
 	key=input("No internet connection. Connect computer to the internet and press Enter, or e(x)it, or (c)ontinue anyway -> ")
@@ -88,24 +96,21 @@ for em in emails:
 	foreign=re.search("=",firstfield)
 	if not isfromfield:
 		print("From field too long,likely spam or malformed email,will delete.\n")
-		todelete.append(emailnumber)
-		utils.savemail(em,emailnumber)
+		savedelemail(em,emailnumber)
 		emailnumber-=1		
 		continue
 	elif isfromfield and foreign and deleteforeignemails:
 		printdetails(details)
 		x1=input("Foreign language detected in from field,will delete.press n for don't delete.'\n")
 		if(x1.upper()!="N"):
-			todelete.append(emailnumber)
-			utils.savemail(em,emailnumber)
+			savedelemail(em,emailnumber)
 			emailnumber-=1
 			continue
 	else:
 		printdetails(details)
 	if(utils.inlist(firstfield,banned)):
 		print("This email address is banned and will be deleted\n")
-		todelete.append(emailnumber)
-		utils.savemail(em,emailnumber)
+		savedelemail(em,emailnumber)
 		emailnumber-=1		
 		continue
 	choice=input("Print raw message? (Y)es,(D)elete email,(B)an email address and delete,(S)ave email , E(x)it or Press Enter to see next email. -> ")
@@ -122,8 +127,7 @@ for em in emails:
 	
 		wait=input("\n\nEnd of message. Press (d) to delete or Enter to continue -> ")
 		if(wait.upper()=="D"):
-			todelete.append(emailnumber)
-			utils.savemail(em,emailnumber)
+			savedelemail(em,emailnumber)
 	elif(choice.upper()=="B"):
 		data=re.split("@",details[0])[1]
 		if(debug):
@@ -135,16 +139,14 @@ for em in emails:
 			dat=open(utils.bannedfile,"a")
 			dat.write(data+"\n")
 			dat.close()
-			todelete.append(emailnumber)
-			utils.savemail(em,emailnumber)
+			savedelemail(em,emailnumber)
 			print("Banned email "+str(emailnumber)+"\n")
 		except:
 			print("Could not add banned email address,try adding it manually in a text editor\n")
 	elif (choice.upper()=="D"):
 		wait=input("\n\nWill delete email number "+str(emailnumber)+"   Press n to not delete or Enter to continue -> ")
 		if (wait.upper()!="N"):
-			todelete.append(emailnumber)
-			utils.savemail(em,emailnumber)
+			savedelemail(em,emailnumber)
 
 	elif(choice.upper()=="X"):
 		break
