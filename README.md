@@ -3,12 +3,12 @@
 NO GUARANTEES,
 USE AT OWN RISK
 
+This program is not meant for the general public ,like all my programs,it is only useful for people who already do programming and can modify it
+to suit themsleves and get it working properly in their situation.
 
-Terminal based lightweight python program to print and process last few emails.May be useful for quickly checking last few emails.
+Terminal based lightweight python program to print and process last few emails.May be useful for quickly checking last few emails and for cyber security purposes.
 
 Does not do html or follow links so not good at viewing strongly html based emails.
-
-Good if you are worries about cyber security
 
 Processing options include : deleting emails,skipping emails,banning email addresses,autodeleting oldest emails and saving emails.
 
