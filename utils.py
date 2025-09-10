@@ -9,6 +9,9 @@ bannedfile="banned"
 optus_server="mail.optusnet.com.au"
 
 
+def printdetails(details):
+	for info in details:
+		print(info)
 
 
 def convert2eml(emaildata):
@@ -18,16 +21,19 @@ def convert2eml(emaildata):
 	data=""
 	insertchar="\n"
 	insert2char="\n\n"
-	for el in emaildata:
-		data+=el.decode("utf-8")
-	for field in fields:
-		index=data.find(field)
-		if index>-1:
-			data = data[:index]+insertchar+data[index:]
-	for field in fields2:
-		index=data.find(field)
-		if index>-1:
-			data = data[:index]+insert2char+data[index:]
+	try:
+		for el in emaildata:
+			data+=el.decode("utf-8")
+		for field in fields:
+			index=data.find(field)
+			if index>-1:
+				data = data[:index]+insertchar+data[index:]
+		for field in fields2:
+			index=data.find(field)
+			if index>-1:
+				data = data[:index]+insert2char+data[index:]
+	except:
+		print("Error decoding email data\n")
 	return(data)    
 
 def textfiletolist(filename):

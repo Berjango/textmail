@@ -30,9 +30,6 @@ from getpass import getpass
 todelete=[]
 
 
-def printdetails(details):
-	for info in details:
-		print(info)
 
 def savedelemail(data,number):
 	'''prepares to delete an email and saves it'''
@@ -100,14 +97,14 @@ for em in emails:
 		emailnumber-=1		
 		continue
 	elif isfromfield and foreign and deleteforeignemails:
-		printdetails(details)
+		utils.printdetails(details)
 		x1=input("Foreign language detected in from field,will delete.press n for don't delete.'\n")
 		if(x1.upper()!="N"):
 			savedelemail(em,emailnumber)
 			emailnumber-=1
 			continue
 	else:
-		printdetails(details)
+		utils.printdetails(details)
 	if(utils.inlist(firstfield,banned)):
 		print("This email address is banned and will be deleted\n")
 		savedelemail(em,emailnumber)
