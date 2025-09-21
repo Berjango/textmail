@@ -16,6 +16,8 @@ maximumemailtext=15000#maximum allowed length of email text in chars after proce
 deleteforeignemails=1 # if set to 1 deletes emails with non English language in the from field
 ################################################################################################################
 
+#Accepts a parameter to the program "m" which tells the program to do manual entry of the email address,server and password,otherwise attempts to read saved details
+#eg "python3 printlatestemails.py m" makes the program perform manual email entry
 
 import poplib
 poplib._MAXLINE=20480
@@ -23,6 +25,7 @@ import email
 from email.parser import Parser
 import re
 import utils
+import sys
 import datetime
 from getpass import getpass
 
@@ -35,8 +38,10 @@ def savedelemail(data,number):
 	'''prepares to delete an email and saves it'''
 	todelete.append(number)
 	utils.savemail(data,number)
-
-
+try:
+	manualentry=sys.argv[1]
+except:
+	manualentry=""
 while not utils.internet_on():
 	key=input("No internet connection. Connect computer to the internet and press Enter, or e(x)it, or (c)ontinue anyway -> ")
 	if(key.upper()=="X"):
@@ -56,13 +61,14 @@ except:
 	emailaddress=""
 	server=""
 	print("No saved data. You can create a text file named inboxdata to save time with the first line containing the email address and second line the inbox server\n")
-if len(emailaddress)<3:
+if len(manualentry)!=0 or len(emailaddress)<3:
 	emailaddress,server,password=utils.typeinboxdetails()
 else:
 	password=getpass("Type the email password -> ")
 #p=Parser()
 loggedin=0
 while not loggedin:
+
 	try:
 		pop = poplib.POP3(server)#pop3 account (hostname)
 		pop.user(emailaddress)#user name (first part of email adress
