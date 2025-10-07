@@ -13,7 +13,8 @@ def printdetails(details):
 	for info in details:
 		print(info)
 
-
+def isemailaddress(text):
+	return(re.search(".+\@.+",text))
 def convert2eml(emaildata):
 	'''Very rough format converter from poplib output to .eml format'''
 	fields=["Received:","From:","Subject:","Content-Type:","Message-ID:","Delivered-To:"]
@@ -74,8 +75,12 @@ def internet_on():
 		return	True
 	else:
 		return	False
-def	typeinboxdetails():
-	emailaddress=input("Type the email address -> ")
+def	typeinboxdetails(possible_emailaddress):
+	if isemailaddress(possible_emailaddress):
+		emailaddress=possible_emailaddress
+		print("Using email address "+str(emailaddress)+"\n")
+	else:
+		emailaddress=input("Type the email address -> ")
 	if "optusnet.com.au" in emailaddress:
 		server=optus_server
 	else:
@@ -122,6 +127,7 @@ def	emaildetails(rawemail):
 	fields=["From: .[^<]{0,140}<.[^>]{0,100}>\,","Date:.{0,30}\d{2}:\d{2}:\d{2}.{0,30}\,","Subject: .[^\,]{5,150}(?=\,)","Content\-Type:.*"]
 	r2=re.sub("\"","",str(rawemail))
 	r2=re.sub("\'","",r2)
+	r2=re.sub("=20"," ",r2)
 	output=[]
 	for field in fields:
 		mobj=re.search(field,r2)

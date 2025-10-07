@@ -16,8 +16,13 @@ maximumemailtext=15000#maximum allowed length of email text in chars after proce
 deleteforeignemails=1 # if set to 1 deletes emails with non English language in the from field
 ################################################################################################################
 
-#Accepts a parameter to the program "m" which tells the program to do manual entry of the email address,server and password,otherwise attempts to read saved details
-#eg "python3 printlatestemails.py m" makes the program perform manual email entry
+# PARAMETERS
+
+#Normally reads an email address from a file but can accept an email address as a parameter to overide the auto read.
+# example : "python3 printalestemails.py big1@gmail.com" 
+# will try and retrieve emails for big1@gmail.com
+
+
 
 import poplib
 poplib._MAXLINE=20480
@@ -39,9 +44,9 @@ def savedelemail(data,number):
 	todelete.append(number)
 	utils.savemail(data,number)
 try:
-	manualentry=sys.argv[1]
+	emailaddress=sys.argv[1]
 except:
-	manualentry=""
+	emailaddress=""
 while not utils.internet_on():
 	key=input("No internet connection. Connect computer to the internet and press Enter, or e(x)it, or (c)ontinue anyway -> ")
 	if(key.upper()=="X"):
@@ -51,20 +56,16 @@ while not utils.internet_on():
 banned=utils.textfiletolist(utils.bannedfile)
 if(not len(banned)):
 	print("No banned addresses detected. You can create a file called banned and list banned addresses in the consecutive lines.\n")
-try:
-	dat=open("inboxdata")
-	emailaddress=dat.readline().strip()
-	server=dat.readline().strip()
-	dat.close()
-	print("Saved email address = "+emailaddress+" saved inbox server = "+server+"\n")
-except:
-	emailaddress=""
-	server=""
-	print("No saved data. You can create a text file named inboxdata to save time with the first line containing the email address and second line the inbox server\n")
-if len(manualentry)!=0 or len(emailaddress)<3:
-	emailaddress,server,password=utils.typeinboxdetails()
-else:
-	password=getpass("Type the email password -> ")
+if not emailaddress:
+    try:
+	    dat=open("inboxdata")
+	    emailaddress=dat.readline().strip()
+	    server=dat.readline().strip()
+	    dat.close()
+    except:
+    	server=""
+    	print("No saved data. You can create a text file named inboxdata to save time.The first line should contain the email address and second line the inbox server\n")
+emailaddress,server,password=utils.typeinboxdetails(emailaddress)
 #p=Parser()
 loggedin=0
 while not loggedin:
