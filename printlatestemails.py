@@ -13,7 +13,7 @@ emailstoprint=15
 maximumemails=2500 #Will autodelete oldest emails if the number of emails exceeds this value
 debug=0 # if set to  1 the program will print extra information useful for debugging
 maximumemailtext=15000#maximum allowed length of email text in chars after processing
-deleteforeignemails=1 # if set to 1 deletes emails with non English language in the from field
+deleteforeignemails=1 # if set to 1 deletes emails with non English language in the from field.0 to allow foreign emails
 ################################################################################################################
 
 # PARAMETERS
@@ -64,100 +64,101 @@ if not emailaddress:
 	    dat.close()
     except:
     	server=""
-    	print("No saved data. You can create a text file named inboxdata to save time.The first line should contain the email address and second line the inbox server\n")
+    	print("No saved inbox data. You can create a text file named inboxdata to save time.The first line should contain the email address and second line the inbox server\n")
 emailaddress,server,password=utils.typeinboxdetails(emailaddress)
 #p=Parser()
-loggedin=0
-while not loggedin:
+start=1
+while start:
+	loggedin=0
+	while not loggedin:
 
-	try:
-		pop = poplib.POP3(server)#pop3 account (hostname)
-		pop.user(emailaddress)#user name (first part of email adress
-		pop.pass_(password)#Email password
-		messagecount, mailsize = pop.stat()
-		loggedin=1
-	except:
-		choice=input("Could not login to inbox,probably wrong details.Type m to enter details manually,p to enter password again or press enter to exit.\n")
-		if (choice.upper()=="M"):
-			emailaddress,server,password=utils.typeinboxdetails()
-		elif(choice.upper()=="P"):
-			password=getpass("Type the email password -> ")
-		else:
-			exit(1)
-
-emails=[]
-for n in range(messagecount,messagecount-emailstoprint,-1):
-	response, lines, octets = pop.retr(n)
-	emails.append(lines)
-pop.quit()
-emailnumber=messagecount
-for em in emails:
-	print("\nEMAIL number "+str(emailnumber)+"\n")
-	details=utils.emaildetails(em)
-	text=details.pop(-1)
-	firstfield=details[0]
-	isfromfield=re.search("From:",firstfield)
-	foreign=re.search("=",firstfield)
-	if not isfromfield:
-		print("From field too long,likely spam or malformed email,will delete.\n")
-		savedelemail(em,emailnumber)
-		emailnumber-=1		
-		continue
-	elif isfromfield and foreign and deleteforeignemails:
-		utils.printdetails(details)
-		x1=input("Foreign language detected in from field,will delete.press n for don't delete.'\n")
-		if(x1.upper()!="N"):
+		try:
+			pop=utils.loginpop(server,emailaddress,password)
+			messagecount, mailsize = pop.stat()
+			loggedin=1
+		except:
+			choice=input("Could not login to inbox,probably wrong details.Type m to enter details manually,p to enter password again or press enter to exit.\n")
+			if (choice.upper()=="M"):
+				emailaddress,server,password=utils.typeinboxdetails(emailaddress)
+			elif(choice.upper()=="P"):
+				password=getpass("Type the email password -> ")
+			else:
+				exit(1)
+	start=0
+	emails=[]
+	for n in range(messagecount,messagecount-emailstoprint,-1):
+		response, lines, octets = pop.retr(n)
+		emails.append(lines)
+	pop.quit()
+	emailnumber=messagecount
+	for em in emails:
+		print("\nEMAIL number "+str(emailnumber)+"\n")
+		details=utils.emaildetails(em)
+		text=details.pop(-1)
+		firstfield=details[0]
+		isfromfield=re.search("From:",firstfield)
+		foreign=re.search("=",firstfield)
+		if not isfromfield:
+			print("From field too long,likely spam or malformed email,will delete.\n")
 			savedelemail(em,emailnumber)
-			emailnumber-=1
+			emailnumber-=1		
 			continue
-	else:
-		utils.printdetails(details)
-	if(utils.inlist(firstfield,banned)):
-		print("This email address is banned and will be deleted\n")
-		savedelemail(em,emailnumber)
-		emailnumber-=1		
-		continue
-	choice=input("Print raw message? (Y)es,(D)elete email,(B)an email address and delete,(S)ave email , E(x)it or Press Enter to see next email. -> ")
-	if (choice.upper()=="Y"):
-		emailtext=utils.html2text(str(text))
-		if(len(emailtext)<maximumemailtext):
-			print (emailtext)
-			print("\n\n\n\n")
+		elif isfromfield and foreign and deleteforeignemails:
+			utils.printdetails(details)
+			x1=input("Foreign language detected in from field,will delete.press n for don't delete.'\n")
+			if(x1.upper()!="N"):
+				savedelemail(em,emailnumber)
+				emailnumber-=1
+				continue
 		else:
-			ans=input("WARNING!!! Email text is too long,probably a scam email,recommended to not print and delete later.Press y to print anyway or enter to not print and continue. -> ")
-			if(ans.upper()=="Y"):
+			utils.printdetails(details)
+		if(utils.inlist(firstfield,banned)):
+			print("This email address is banned and will be deleted\n")
+			savedelemail(em,emailnumber)
+			emailnumber-=1		
+			continue
+		choice=input("Print raw message? (Y)es,(D)elete email,(B)an email address and delete,(S)ave email , E(x)it, (R)estart or Press Enter to see next email. -> ")
+		if (choice.upper()=="Y"):
+			emailtext=utils.html2text(str(text))
+			if(len(emailtext)<maximumemailtext):
 				print (emailtext)
 				print("\n\n\n\n")
-	
-		wait=input("\n\nEnd of message. Press (d) to delete or Enter to continue -> ")
-		if(wait.upper()=="D"):
-			savedelemail(em,emailnumber)
-	elif(choice.upper()=="B"):
-		data=re.split("@",details[0])[1]
-		if(debug):
-			print("From field= "+details[0]+"    data= "+data+"\n")
-		data=re.sub(r'>.*',"",data)
-		try:
+			else:
+				ans=input("WARNING!!! Email text is too long,probably a scam email,recommended to not print and delete later.Press y to print anyway or enter to not print and continue. -> ")
+				if(ans.upper()=="Y"):
+					print (emailtext)
+					print("\n\n\n\n")
+		
+			wait=input("\n\nEnd of message. Press (d) to delete or Enter to continue -> ")
+			if(wait.upper()=="D"):
+				savedelemail(em,emailnumber)
+		elif(choice.upper()=="B"):
+			data=re.split("@",details[0])[1]
 			if(debug):
-				print(data)
-			dat=open(utils.bannedfile,"a")
-			dat.write(data+"\n")
-			dat.close()
-			savedelemail(em,emailnumber)
-			print("Banned email "+str(emailnumber)+"\n")
-		except:
-			print("Could not add banned email address,try adding it manually in a text editor\n")
-	elif (choice.upper()=="D"):
-		wait=input("\n\nWill delete email number "+str(emailnumber)+"   Press n to not delete or Enter to continue -> ")
-		if (wait.upper()!="N"):
-			savedelemail(em,emailnumber)
+				print("From field= "+details[0]+"    data= "+data+"\n")
+			data=re.sub(r'>.*',"",data)
+			banned.append(data)
+			if(utils.addline2file(data,utils.bannedfile)):
+				savedelemail(em,emailnumber)
+				print("Banned email "+str(emailnumber)+"\n")
+			else:
+				print("Error banning email address\n")
+		elif (choice.upper()=="D"):
+			wait=input("\n\nWill delete email number "+str(emailnumber)+"   Press n to not delete or Enter to continue -> ")
+			if (wait.upper()!="N"):
+				savedelemail(em,emailnumber)
+	
+		elif(choice.upper()=="X"):
+			break
+		elif(choice.upper()=="S"):
+			utils.savemail(em,emailnumber)
+		elif(choice.upper()=="R"):
+			start=1
+			print("\n\n\nRestarting !!\n\n\n")
+			break
+        
 
-	elif(choice.upper()=="X"):
-		break
-	elif(choice.upper()=="S"):
-		utils.savemail(em,emailnumber)
-
-	emailnumber-=1
+		emailnumber-=1
 
 todelete+=range(1,messagecount-maximumemails-len(todelete)+1)
 if(debug):

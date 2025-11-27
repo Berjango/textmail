@@ -8,7 +8,16 @@ import datetime
 bannedfile="banned"
 optus_server="mail.optusnet.com.au"
 
-
+def addline2file(line,filename):
+	worked=1
+	try:
+		dat=open(filename,"a")
+		dat.write(line+"\n")
+		dat.close()
+	except:
+		worked=0
+	return(worked)
+    
 def printdetails(details):
 	for info in details:
 		print(info)
@@ -36,6 +45,12 @@ def convert2eml(emaildata):
 	except:
 		print("Error decoding email data\n")
 	return(data)    
+def	loginpop(server,emailaddress,password):
+	''' login to  a pop mail server'''
+	pop = poplib.POP3(server)#pop3 account (hostname)
+	pop.user(emailaddress)#user name (first part of email adress
+	pop.pass_(password)#Email password
+	return(pop)
 
 def textfiletolist(filename):
 	'''converts a file with many lines of text values to a list of such values.Returns the list,empty or otherwise'''
@@ -91,9 +106,7 @@ def	typeinboxdetails(possible_emailaddress):
 def delete_emails(todelete,server,emailaddress,password):
 	'''deletes emails according to a passed list of email numbers'''
 	try:
-		pop = poplib.POP3(server)#pop3 account (hostname)
-		pop.user(emailaddress)#user name (first part of email adress
-		pop.pass_(password)#Email password
+		pop=loginpop(server,emailaddress,password)
 		print("Preparing to delete\n")
 		for id in todelete:
 			print("Deleting email "+str(id)+"\n")
